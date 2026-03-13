@@ -1,4 +1,14 @@
 baseURL = 'https://example.org/'
-languageCode = 'en-us'
 title = 'weeklyOSM'
 theme = 'ananke'
+
+languageCode = "en-us"
+defaultContentLanguage = "en"
+[languages]
+  [languages.de]
+    weight = 1
+    contentDir = "content/de"
+    fallback = "en"
+  [languages.en]
+    weight = 2
+    contentDir = "content/en"
