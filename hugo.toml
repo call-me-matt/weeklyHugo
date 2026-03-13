@@ -12,3 +12,6 @@ defaultContentLanguage = "en"
   [languages.en]
     weight = 2
     contentDir = "content/en"
+
+[params]
+  rss = true
