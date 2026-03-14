@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://weeklyosm.eu/'
 title = 'weeklyOSM'
 theme = 'clarity'
 languageCode = "en"
@@ -7,4 +7,5 @@ defaultContentLanguage = "en"
 mainSections = ["blog"]
 
 [params]
+  logo = "images/weeklyOSM_logo.png"
   rss = true
