@@ -1,9 +1,11 @@
 [de]
+  languageName = "Deutsch"
   title = "Wochennotiz"
   weight = 1
   contentDir = "content/de"
   fallback = "en"
 [en]
+  languageName = "English"
   title = "weeklyOSM"
   weight = 2
   contentDir = "content/en"

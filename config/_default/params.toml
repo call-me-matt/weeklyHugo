@@ -1,0 +1,14 @@
+logo = "images/weeklyOSM_logo.png"
+
+enableSearch = true
+
+rss = true
+
+showLanguageName = true
+showLanguageIcon = true
+
+mainSections = ["blog"]
+
+figurePositionShow = false
+
+languageMenuName = "🌐"

@@ -4,8 +4,8 @@ theme = 'clarity'
 languageCode = "en"
 defaultContentLanguage = "en"
 
-mainSections = ["blog"]
+[outputs]
+home = ["HTML", "RSS", "JSON"]
 
-[params]
-  logo = "images/weeklyOSM_logo.png"
-  rss = true
+[pagination]
+paperSize = 1
