@@ -4,6 +4,8 @@ theme = 'clarity'
 languageCode = "en"
 defaultContentLanguage = "en"
 
+mainSections = ["blog"]
+
 [languages]
   [languages.de]
     weight = 1
