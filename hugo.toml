@@ -1,6 +1,6 @@
 baseURL = 'https://example.org/'
 title = 'weeklyOSM'
-theme = 'ananke'
+theme = 'clarity'
 languageCode = "en"
 defaultContentLanguage = "en"
 

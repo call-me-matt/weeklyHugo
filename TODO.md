@@ -1,5 +1,6 @@
 TO TACKLE:
-* language selector shows only available translations, do we want to show also unavailable ones?
+* language selector 
+* do we want to show also unavailable ones?
 * rss feeds for all languages with unchanged adress (de/feed and feed?lang=de)
 * theme polishing, favicon
 * social media preview
