@@ -1,6 +1,6 @@
 TO TACKLE:
 * featureImageCap with superscript and links
-* language selector 
+* language selector is available below blog posts but has no text?
 * do we want to show also unavailable ones?
 * rss feeds for all languages with unchanged adress (de/feed and feed?lang=de)
 * theme polishing, use hugo mod instead of theme git submodule, favicon

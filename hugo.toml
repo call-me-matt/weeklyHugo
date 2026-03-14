@@ -6,14 +6,5 @@ defaultContentLanguage = "en"
 
 mainSections = ["blog"]
 
-[languages]
-  [languages.de]
-    weight = 1
-    contentDir = "content/de"
-    fallback = "en"
-  [languages.en]
-    weight = 2
-    contentDir = "content/en"
-
 [params]
   rss = true

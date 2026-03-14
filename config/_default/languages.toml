@@ -1,0 +1,9 @@
+[de]
+  title = "Wochennotiz"
+  weight = 1
+  contentDir = "content/de"
+  fallback = "en"
+[en]
+  title = "weeklyOSM"
+  weight = 2
+  contentDir = "content/en"
