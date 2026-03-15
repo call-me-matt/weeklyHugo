@@ -31,10 +31,10 @@ jobs:
       - name: Run Integrity Checks
         run: |
           # Install yq to read your languages.toml
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+          sudo wget -nv https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 
           # Extract language keys (de, en, etc.)
-          LANGS=$(yq 'keys | .[]' config/_default/languages.toml)
+          LANGS=$(yq 'keys | join(" ")' config/_default/languages.toml)
 
           echo "Verifying build for: ${LANGS}"
 
