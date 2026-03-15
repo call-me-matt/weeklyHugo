@@ -7,7 +7,7 @@ rss = true
 showLanguageName = true
 showLanguageIcon = true
 
-mainSections = ["blog"]
+mainSections = ["archives"]
 
 figurePositionShow = false
 
