@@ -1,8 +1,8 @@
 # weeklyHugo
 
-this is a test balloon to convert weeklyOSM from wordpress to Hugo CMS
+This is a test balloon to convert weeklyOSM from wordpress to Hugo CMS.
 
-`demo` branch has some content and is always rebased on latest main.
+There is some content for testing purposes, but this repo does not contain the full migration.
 
-`TODO.md` documents current state
+`TODO.md` documents current state.
 
