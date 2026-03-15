@@ -1,0 +1,64 @@
+name: Build, Test, and Deploy via SFTP
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build Hugo
+        run: hugo --gc --minify
+
+#      - name: Build Pagefind
+#        run: npx pagefind --site public
+
+      - name: Run Integrity Checks
+        run: |
+          # Install yq to read your languages.toml
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+
+          # Extract language keys (de, en, etc.)
+          LANGS=$(yq 'keys | .[]' config/_default/languages.toml)
+
+          echo "Verifying build for: $LANGS"
+
+          # Check if Pagefind index exists
+#          if [ ! -s "public/_pagefind/pagefind.js" ]; then
+#            echo "Error: Search index is empty!"
+#            exit 1
+#          fi
+
+          # Check if every language folder was generated
+          for lang in $LANGS; do
+            if [ ! -d "public/$lang" ]; then
+              echo "Error: Folder 'public/$lang' missing!"
+              exit 1
+            fi
+          done
+          echo "All checks passed!"
+
+#      - name: Deploy to Server via SFTP
+#        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+#        with:
+#          username: ${{ secrets.SFTP_USERNAME }}
+#          server: ${{ secrets.SFTP_SERVER }}
+#          ssh_private_key: ${{ secrets.SFTP_SSH_KEY }}
+#          local_path: './public/*'
+#          remote_path: '/var/www/my-website' # Change this to your server path
+#          args: '-o ConnectTimeout=5'
