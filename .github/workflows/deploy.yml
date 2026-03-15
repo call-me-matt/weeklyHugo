@@ -36,7 +36,7 @@ jobs:
           # Extract language keys (de, en, etc.)
           LANGS=$(yq 'keys | .[]' config/_default/languages.toml)
 
-          echo "Verifying build for: $LANGS"
+          echo "Verifying build for: ${LANGS}"
 
           # Check if Pagefind index exists
 #          if [ ! -s "public/_pagefind/pagefind.js" ]; then
@@ -45,12 +45,14 @@ jobs:
 #          fi
 
           # Check if every language folder was generated
+
           for lang in $LANGS; do
             if [ ! -d "public/$lang" ]; then
-              echo "Error: Folder 'public/$lang' missing!"
+              echo "Folder missing: ${lang}"
               exit 1
             fi
           done
+
           echo "All checks passed!"
 
 #      - name: Deploy to Server via SFTP
