@@ -1,10 +1,13 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://weeklyosm.eu/'
 title = 'weeklyOSM'
 theme = 'clarity'
 languageCode = "en"
 defaultContentLanguage = "en"
 
-mainSections = ["blog"]
 
 [params]
-  rss = true
+author = 'weeklyteam'
+enableSearch = true
+mainSections = ["blog"]
+pinFeatured = true
+rss = true
