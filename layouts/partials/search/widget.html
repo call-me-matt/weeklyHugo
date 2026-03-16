@@ -1,0 +1,89 @@
+<section class="widget">
+  <h3 class="widget-title">{{ i18n "search_title" | default "Search" }}</h3>
+
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+  <script src="/pagefind/pagefind-ui.js"></script>
+
+  <div id="search" style="min-height: 48px;"></div>
+
+  <script>
+    // Wait for the window to load to ensure Pagefind assets are ready
+    window.addEventListener('load', function() {
+      if (typeof PagefindUI !== "undefined") {
+        new PagefindUI({
+          element: "#search",
+          showSubResults: false,
+          pageSize: 5,
+          translations: {
+            placeholder: '{{ i18n "search_placeholder" | default "Search..." }}'
+          },
+          // Optional: Restrict search results to the current page language
+          forceFilter: {
+            language: "{{ .Lang }}"
+          }
+        });
+      }
+    });
+  </script>
+
+  <style>
+    /* 1. Theme Variable Mapping: Synchronizes Pagefind with Clarity Colors */
+    #search {
+      --pagefind-ui-primary: var(--theme);
+      --pagefind-ui-text: var(--text);
+      --pagefind-ui-background: var(--bg);
+      --pagefind-ui-border: var(--border);
+      --pagefind-ui-font: inherit;
+      width: 100%;
+    }
+
+    /* 2. Form Styling: Mimics Clarity's native input fields */
+    .pagefind-ui__form {
+      border: 1px solid var(--border) !important;
+      background: var(--bg) !important;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .pagefind-ui__search-input {
+      color: var(--text) !important;
+      background: transparent !important;
+      font-size: 0.95rem !important;
+      padding: 10px 12px !important;
+      border: none !important;
+    }
+
+    /* 3. Results Drawer: Floats over the sidebar to prevent layout shifts */
+    .pagefind-ui__drawer {
+      position: absolute !important;
+      width: 100%;
+      background: var(--bg) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 9999;
+      margin-top: 5px;
+    }
+
+    /* 4. Search Result Typography */
+    .pagefind-ui__result-link {
+      color: var(--theme) !important;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .pagefind-ui__result-excerpt {
+      color: var(--text) !important;
+      font-size: 0.85rem !important;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+
+    /* 5. Cleanup: Removes heavy default icons for a flatter look */
+    .pagefind-ui__search-clear {
+      background-color: var(--border) !important;
+      color: var(--text) !important;
+      width: 30px !important;
+      height: 30px !important;
+    }
+  </style>
+</section>
