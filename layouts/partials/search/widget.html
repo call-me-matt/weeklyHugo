@@ -1,89 +1,100 @@
-<section class="widget">
+<section class="widget" id="search-widget-wrapper">
   <h3 class="widget-title">{{ i18n "search_title" | default "Search" }}</h3>
 
   <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
   <script src="/pagefind/pagefind-ui.js"></script>
 
-  <div id="search" style="min-height: 48px;"></div>
+  <div id="search"></div>
 
   <script>
-    // Wait for the window to load to ensure Pagefind assets are ready
     window.addEventListener('load', function() {
       if (typeof PagefindUI !== "undefined") {
         new PagefindUI({
           element: "#search",
           showSubResults: false,
           pageSize: 5,
-          translations: {
-            placeholder: '{{ i18n "search_placeholder" | default "Search..." }}'
-          },
-          // Optional: Restrict search results to the current page language
-          forceFilter: {
-            language: "{{ .Lang }}"
-          }
+          translations: { placeholder: "Search..." }
         });
+
+        var modeSwitch = document.getElementById('mode');
+        var wrapper = document.getElementById('search-widget-wrapper');
+
+        var updateSearchMode = function() {
+          // REVERSE LOGIC: 
+          // If switch is ON (checked) -> Dark Mode
+          // If switch is OFF -> Light Mode
+          if (modeSwitch && modeSwitch.checked) {
+            wrapper.setAttribute('data-ui-mode', 'dark');
+          } else {
+            wrapper.setAttribute('data-ui-mode', 'light');
+          }
+        };
+
+        if (modeSwitch) {
+          updateSearchMode();
+          modeSwitch.addEventListener('change', updateSearchMode);
+        }
       }
     });
   </script>
 
   <style>
-    /* 1. Theme Variable Mapping: Synchronizes Pagefind with Clarity Colors */
-    #search {
-      --pagefind-ui-primary: var(--theme);
-      --pagefind-ui-text: var(--text);
-      --pagefind-ui-background: var(--bg);
-      --pagefind-ui-border: var(--border);
-      --pagefind-ui-font: inherit;
-      width: 100%;
+    /* --- BASE SETUP --- */
+    #search { 
+      margin-bottom: 2rem; 
+      width: 100%; 
+      background: transparent !important; 
     }
 
-    /* 2. Form Styling: Mimics Clarity's native input fields */
-    .pagefind-ui__form {
-      border: 1px solid var(--border) !important;
-      background: var(--bg) !important;
-      border-radius: 4px;
-      position: relative;
+    .pagefind-ui__result, 
+    .pagefind-ui__drawer, 
+    .pagefind-ui__form,
+    .pagefind-ui__results-area { 
+      background-color: transparent !important; 
     }
 
-    .pagefind-ui__search-input {
-      color: var(--text) !important;
-      background: transparent !important;
-      font-size: 0.95rem !important;
-      padding: 10px 12px !important;
+    /* Clear button (X) */
+    #search .pagefind-ui__search-clear {
+      background-color: transparent !important;
       border: none !important;
+      opacity: 0.7 !important;
     }
 
-    /* 3. Results Drawer: Floats over the sidebar to prevent layout shifts */
-    .pagefind-ui__drawer {
-      position: absolute !important;
-      width: 100%;
-      background: var(--bg) !important;
-      border: 1px solid var(--border) !important;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      z-index: 9999;
-      margin-top: 5px;
+    /* --- LIGHT MODE SET (Dark Text) --- */
+    [data-ui-mode="light"] #search {
+      --pagefind-ui-text: #000000 !important;
+    }
+    [data-ui-mode="light"] #search * {
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+    }
+    [data-ui-mode="light"] .pagefind-ui__search-input {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+      color: #000000 !important;
     }
 
-    /* 4. Search Result Typography */
-    .pagefind-ui__result-link {
-      color: var(--theme) !important;
-      font-weight: 600;
-      text-decoration: none;
+    /* --- DARK MODE SET (Light Text) --- */
+    [data-ui-mode="dark"] #search {
+      --pagefind-ui-text: #ffffff !important;
+    }
+    [data-ui-mode="dark"] #search * {
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      opacity: 1 !important;
+    }
+    [data-ui-mode="dark"] .pagefind-ui__search-input {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: #ffffff !important;
+      border: 1px solid #444 !important;
+    }
+    [data-ui-mode="dark"] .pagefind-ui__result-link {
+      color: #80bfff !important;
+    }
+    [data-ui-mode="dark"] #search .pagefind-ui__search-clear {
+      filter: invert(1) !important;
     }
 
-    .pagefind-ui__result-excerpt {
-      color: var(--text) !important;
-      font-size: 0.85rem !important;
-      opacity: 0.9;
-      line-height: 1.4;
-    }
-
-    /* 5. Cleanup: Removes heavy default icons for a flatter look */
-    .pagefind-ui__search-clear {
-      background-color: var(--border) !important;
-      color: var(--text) !important;
-      width: 30px !important;
-      height: 30px !important;
-    }
+    /* Pagefind Drawer Fix */
+    .pagefind-ui__drawer { position: relative !important; display: block !important; }
   </style>
 </section>
