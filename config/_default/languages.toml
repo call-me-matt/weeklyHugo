@@ -1,11 +1,77 @@
-[de]
-  languageName = "Deutsch"
-  title = "Wochennotiz"
-  weight = 1
-  contentDir = "content/de"
-  fallback = "en"
 [en]
   languageName = "English"
   title = "weeklyOSM"
-  weight = 2
+  weight = 1
   contentDir = "content/en"
+[de]
+  languageName = "Deutsch"
+  title = "Wochennotiz"
+  weight = 2
+  contentDir = "content/de"
+  fallback = "en"
+[es]
+  languageName = "Español"
+  title = "semanarioOSM"
+  weight = 3
+  contentDir = "content/es"
+  fallback = "en"
+[pt]
+  languageName = "Português"
+  title = "semanárioOSM"
+  weight = 4
+  contentDir = "content/pt"
+  fallback = "en"
+[ru]
+  languageName = "Русский"
+  title = "Еженедельник OSM"
+  weight = 5
+  contentDir = "content/ru"
+  fallback = "en"
+[jp]
+  languageName = "日本語"
+  title = "週刊OSM"
+  weight = 6
+  contentDir = "content/jp" # ja
+  fallback = "en"
+[fr]
+  languageName = "Français"
+  title = "hebdoOSM"
+  weight = 7
+  contentDir = "content/fr"
+  fallback = "en"
+[it]
+  languageName = "Italiano"
+  title = "Notiziario Settimanale OSM"
+  weight = 8
+  contentDir = "content/it"
+  fallback = "en"
+[ko]
+  languageName = "한국어"
+  title = "주간 OSM"
+  weight = 9
+  contentDir = "content/ko" # kr
+  fallback = "en"
+[br]
+  languageName = "Português do Brasil"
+  title = "semanárioOSM"
+  weight = 10
+  contentDir = "content/br"
+  fallback = "pt"
+[zh]
+  languageName = "台灣中文"
+  title = "週刊OSM"
+  weight = 11
+  contentDir = "content/zh" # tw
+  fallback = "en"
+[uk]
+  languageName = "Українська"
+  title = "Тижневик OSM"
+  weight = 12
+  contentDir = "content/uk" # ua
+  fallback = "en"
+[cz]
+  languageName = "Čeština"
+  title = "týdeník"
+  weight = 13
+  contentDir = "content/cz"
+  fallback = "en"
