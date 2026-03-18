@@ -39,14 +39,14 @@
   contentDir = "content/pt"
   fallback = "en"
 
-[br]
+[pt-br]
   languageName = "Português do Brasil"
   title = "semanárioOSM"
   weight = 7
   contentDir = "content/br"
   fallback = "pt"
 
-[cz]
+[cs]
   languageName = "Čeština"
   title = "týdeník"
   weight = 8
@@ -64,26 +64,26 @@
   languageName = "Українська"
   title = "Тижневик OSM"
   weight = 10
-  contentDir = "content/uk" # ua
+  contentDir = "content/uk"
   fallback = "en"
 
-[zh]
+[zh-tw]
   languageName = "台灣中文"
   title = "週刊OSM"
   weight = 11
-  contentDir = "content/zh" # tw
+  contentDir = "content/zh"
   fallback = "en"
 
-[jp]
+[ja]
   languageName = "日本語"
   title = "週刊OSM"
   weight = 12
-  contentDir = "content/jp" # ja
+  contentDir = "content/jp"
   fallback = "en"
 
 [ko]
   languageName = "한국어"
   title = "주간 OSM"
   weight = 13
-  contentDir = "content/ko" # kr
+  contentDir = "content/ko"
   fallback = "en"
