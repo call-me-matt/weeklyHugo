@@ -12,7 +12,7 @@ The following aspects need to be investigated and solutions to be developed
 * workflow of publishing, editing
 * migration of previous blog entries (export database to content folder as markups)
 * comment function with moderation
-* migration of previous comments
+* migration of previous comments (started in migration/move_osmbc_md.py)
 * email subscription function
 
 # TODO:
@@ -21,8 +21,8 @@ The following aspects have been identified and need to be completed in order to 
 
 ## OSMBC markdown exporter
 
-* lead pictures must be without size attribute  =1413x959
-* lead picture must be moved to archetypes (featureImage, featureImageCap, featureImageAlt)
+* lead pictures must be without size attribute  =1413x959 --> see migration/transform_osmbc_leadimage.py
+* lead picture must be moved to archetypes (featureImage, featureImageCap, featureImageAlt) --> see migration/transform_osmbc_leadimage.py
 * referene to articles with shortcodes (li id to be replaced by {{ < anchor "id-slug" > }})
 * footnotes also need a shortcode (^1^ to be translated into {{< sup "1" >}})
 * upcoming events category shall not be a list item
