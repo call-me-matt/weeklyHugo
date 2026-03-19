@@ -8,65 +8,98 @@ from pathlib import Path
 
 """
 ################################################################################
-# Purpose: Master script to process OSMBC markdown downloads from a ZIP file.
-# 1. Extracts ZIP to a temporary directory.
-# 2. transform_osmbc_leadimage.py: Processes image & frontmatter.
-# 3. update_hugo_titles.py: Updates titles via languages.toml.
-# 4. move_osmbc_md.py: Moves finalized files to Hugo content folder.
+# Purpose: Master script to process OSMBC markdown downloads from an inbox.
+# 1. Scans 'migration/inbox' for .zip files (ignoring those with 'OK_' prefix).
+# 2. Extracts each ZIP to a temporary directory.
+# 3. Runs transformation, title updates, and migration scripts.
+# 4. Renames the ZIP file in the inbox to 'OK_<original_name>.zip' on success.
 #
 # Usage:
-#   python3 ./migration/migrate_osmbc_md.py /path/to/downloads.zip
+#   python3 ./migration/migrate_osmbc_md.py
 ################################################################################
 """
 
 
-def run_step(script_name, source_path=None):
+def run_step(script_name, source_path):
     script_path = Path(__file__).parent / script_name
-    print(f"--- Starting {script_name} ---")
+    print(f"   -> Executing {script_name}...")
 
-    args = [sys.executable, str(script_path)]
-    if source_path:
-        args.append(str(source_path))
-
+    # Ensure source_path is passed as a string for subprocess
+    args = [sys.executable, str(script_path), str(source_path)]
     result = subprocess.run(args)
+
     if result.returncode != 0:
-        print(f"ABORTED: {script_name} failed.")
+        print(f"   [!] ERROR: {script_name} failed.")
         return False
-    print(f"--- {script_name} finished successfully ---\n")
+    return True
+
+
+def process_zip(zip_path):
+    print(f"\n--- Processing: {zip_path.name} ---")
+
+    # Create a temporary directory for extraction and processing
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        try:
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                zip_ref.extractall(temp_path)
+        except zipfile.BadZipFile:
+            print(f"   [!] ERROR: {zip_path.name} is not a valid ZIP file. Skipping.")
+            return False
+
+        # Step 1: Process Lead Image and Frontmatter (In-place in temp)
+        if not run_step("transform_osmbc_leadimage.py", temp_path):
+            return False
+
+        # Step 2: Finalize titles using languages.toml (In-place in temp)
+        if not run_step("update_hugo_titles.py", temp_path):
+            return False
+
+        # Step 3: Move finalized files to the Hugo content folder
+        if not run_step("move_osmbc_md.py", temp_path):
+            return False
+
+    # Success: All steps completed
+    print(f"--- Finished: {zip_path.name} ---")
     return True
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python3 ./migration/migrate_osmbc_md.py <input_zip_file>")
-        sys.exit(1)
+    # Define paths relative to the Hugo root
+    base_path = Path(__file__).parent
+    inbox_path = base_path / "inbox"
 
-    zip_path = Path(sys.argv[1])
-    if not zip_path.suffix == ".zip":
-        print("Error: Input must be a .zip file.")
-        sys.exit(1)
+    if not inbox_path.exists():
+        print(f"Creating missing inbox directory: {inbox_path}")
+        inbox_path.mkdir(parents=True, exist_ok=True)
+        return
 
-    # Create a temporary directory to work in
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_path = Path(temp_dir)
+    # Find all zip files that DO NOT start with 'OK_'
+    zip_files = [f for f in inbox_path.glob("*.zip") if not f.name.startswith("OK_")]
 
-        print(f"Extracting {zip_path.name} to temporary directory...")
-        with zipfile.ZipFile(zip_path, "r") as zip_ref:
-            zip_ref.extractall(temp_path)
+    if not zip_files:
+        print("No new ZIP files found in migration/inbox/.")
+        return
 
-        # Step 1: Process Lead Image and Frontmatter
-        if not run_step("transform_osmbc_leadimage.py", temp_path):
-            sys.exit(1)
+    print(f"Found {len(zip_files)} new ZIP file(s) to process.")
 
-        # Step 2: Finalize titles using the Hugo languages.toml
-        if not run_step("update_hugo_titles.py", temp_path):
-            sys.exit(1)
+    for zip_file in zip_files:
+        success = process_zip(zip_file)
 
-        # Step 3: Move finalized files to the Hugo content folder
-        if not run_step("move_osmbc_md.py", temp_path):
-            sys.exit(1)
+        if success:
+            # Prefix the file with OK_ to mark it as processed
+            new_name = zip_file.with_name(f"OK_{zip_file.name}")
+            zip_file.rename(new_name)
+            print(
+                f"   [+] {zip_file.name} marked as processed (renamed to {new_name.name})."
+            )
+        else:
+            print(
+                f"   [!] {zip_file.name} was not fully processed. It remains unchanged in the inbox."
+            )
 
-    print("✅ Success: All files from ZIP processed and migrated to ./content/")
+    print("\n✅ All new ZIP files have been handled.")
 
 
 if __name__ == "__main__":
