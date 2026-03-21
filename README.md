@@ -6,3 +6,10 @@ There is some content for testing purposes, but this repo does not contain the f
 
 `TODO.md` documents current state.
 
+## Quick Start
+
+Make sure to [install](https://pagefind.app/docs/installation/) pagefind via
+
+```
+npx pagefind --site "public"
+```

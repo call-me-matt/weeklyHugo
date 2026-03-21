@@ -1,0 +1,29 @@
+<section class="widget" id="search-widget-wrapper">
+  <h3 class="widget-title">{{ i18n "search_title" | default "Search" }}</h3>
+
+  <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+  <script src="/pagefind/pagefind-ui.js"></script>
+
+  <div id="search"></div>
+
+  <script>
+    window.addEventListener("load", function () {
+      if (typeof PagefindUI !== "undefined") {
+        new PagefindUI({
+          element: "#search",
+          showSubResults: false,
+          pageSize: 5,
+          translations: { placeholder: "Search..." },
+        });
+      }
+    });
+  </script>
+
+  <style>
+    /* --- BASE SETUP --- */
+    :root {
+      --pagefind-ui-text: var(--text);
+      --pagefind-ui-background: transparent;
+    }
+  </style>
+</section>
