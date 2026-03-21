@@ -1,8 +1,6 @@
 name: Build, Test, and Deploy via SFTP
 
-on:
-  push:
-    branches: ["main"]
+on: [push, pull_request]
 
 jobs:
   deploy:
@@ -10,6 +8,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+          fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -25,42 +26,58 @@ jobs:
       - name: Build Hugo
         run: hugo --gc --minify
 
-      # - name: Build Pagefind
-      #   run: npx pagefind --site public
+      - name: Build Pagefind
+        run: npx pagefind --site public
 
       - name: Run Integrity Checks
         run: |
           # Install yq to read your languages.toml
           sudo wget -nv https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 
-          # Extract language keys (de, en, etc.)
-          LANGS=$(yq 'keys | join(" ")' config/_default/languages.toml)
+          # Get all language keys (e.g., pt-br, en, es)
+          LANG_KEYS=$(yq 'keys | join(" ")' config/_default/languages.toml)
 
-          echo "Verifying build for: ${LANGS}"
+          echo "Starting verification for: ${LANG_KEYS}"
 
-          # Check if Pagefind index exists
-          # if [ ! -s "public/_pagefind/pagefind.js" ]; then
-          #   echo "Error: Search index is empty!"
-          #   exit 1
-          # fi
+          # Global Pagefind check
+          if [ ! -s "public/pagefind/pagefind.js" ]; then
+            echo "::error::Search index pagefind.js is missing or empty!"
+            exit 1
+          fi
 
-          # Check if every language folder was generated
+          for key in $LANG_KEYS; do
+            # 1. Get the contentDir for this specific key (e.g., "content/br")
+            # 2. Use 'sed' to remove the "content/" prefix to get the output folder name (e.g., "br")
+            RAW_DIR=$(yq ".\"$key\".contentDir" config/_default/languages.toml)
+            OUT_DIR=$(echo $RAW_DIR | sed 's|^content/||')
 
-          for lang in $LANGS; do
-            if [ ! -d "public/$lang" ]; then
-              echo "Folder missing: ${lang}"
+            echo "Checking Language Key: $key (Output Folder: public/$OUT_DIR)"
+
+            # Verify the physical output folder exists
+            if [ ! -d "public/$OUT_DIR" ]; then
+              echo "::error::Output folder 'public/$OUT_DIR' missing for language '$key'"
               exit 1
             fi
+
+            # Verify the Pagefind index exists using the Language Key (ISO code)
+            # Pagefind uses the [key], e.g., pagefind.pt-br_HASH.pf_meta
+            if ! ls public/pagefind/pagefind.${key}_*.pf_meta >/dev/null 2>&1; then
+              echo "::error::Pagefind index meta missing for language key: $key"
+              exit 1
+            fi
+
+            echo "✓ Integrity passed for $key ($OUT_DIR)"
           done
 
           echo "All checks passed!"
 
-#      - name: Deploy to Server via SFTP
-#        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-#        with:
-#          username: ${{ secrets.SFTP_USERNAME }}
-#          server: ${{ secrets.SFTP_SERVER }}
-#          ssh_private_key: ${{ secrets.SFTP_SSH_KEY }}
-#          local_path: './public/*'
-#          remote_path: '/var/www/my-website' # Change this to your server path
-#          args: '-o ConnectTimeout=5'
+#      - name: Deploy to Server via SFTP (if pushed to main branch)
+#          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#          uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+#          with:
+#            username: ${{ secrets.SFTP_USERNAME }}
+#            server: ${{ secrets.SFTP_SERVER }}
+#            ssh_private_key: ${{ secrets.SFTP_SSH_KEY }}
+#            local_path: './public/*'
+#            remote_path: '/var/www/my-website'
+#            args: '-o ConnectTimeout=5'
