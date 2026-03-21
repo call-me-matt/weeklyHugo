@@ -1,4 +1,5 @@
 [de]
+  languageCode = "de"
   languageName = "Deutsch"
   title = "Wochennotiz"
   weight = 2
@@ -6,12 +7,14 @@
   fallback = "en"
 
 [en]
+  languageCode = "en"
   languageName = "English"
   title = "weeklyOSM"
   weight = 1
   contentDir = "content/en"
 
 [es]
+  languageCode = "es"
   languageName = "Español"
   title = "semanarioOSM"
   weight = 3
@@ -19,6 +22,7 @@
   fallback = "en"
 
 [fr]
+  languageCode = "fr"
   languageName = "Français"
   title = "hebdoOSM"
   weight = 4
@@ -26,6 +30,7 @@
   fallback = "en"
 
 [it]
+  languageCode = "it"
   languageName = "Italiano"
   title = "Notiziario Settimanale OSM"
   weight = 5
@@ -33,20 +38,23 @@
   fallback = "en"
 
 [pt]
+  languageCode = "pt"
   languageName = "Português"
   weight = 6
   title = "semanárioOSM"
   contentDir = "content/pt"
   fallback = "en"
 
-[pt-br]
+[br]
+  languageCode = "pt-br"
   languageName = "Português do Brasil"
   title = "semanárioOSM"
   weight = 7
   contentDir = "content/br"
   fallback = "pt"
 
-[cs]
+[cz]
+  languageCode = "cs"
   languageName = "Čeština"
   title = "týdeník"
   weight = 8
@@ -54,6 +62,7 @@
   fallback = "en"
 
 [ru]
+  languageCode = "ru"
   languageName = "Русский"
   title = "Еженедельник OSM"
   weight = 9
@@ -61,20 +70,23 @@
   fallback = "en"
 
 [uk]
+  languageCode = "uk"
   languageName = "Українська"
   title = "Тижневик OSM"
   weight = 10
   contentDir = "content/uk"
   fallback = "en"
 
-[zh-tw]
+[zh]
+  languageCode = "zh-tw"
   languageName = "台灣中文"
   title = "週刊OSM"
   weight = 11
   contentDir = "content/zh"
   fallback = "en"
 
-[ja]
+[jp]
+  languageCode = "ja"
   languageName = "日本語"
   title = "週刊OSM"
   weight = 12
@@ -82,6 +94,7 @@
   fallback = "en"
 
 [ko]
+  languageCode = "ko"
   languageName = "한국어"
   title = "주간 OSM"
   weight = 13

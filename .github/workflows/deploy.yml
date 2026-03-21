@@ -34,35 +34,31 @@ jobs:
           # Install yq to read your languages.toml
           sudo wget -nv https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 
-          # Get all language keys (e.g., pt-br, en, es)
-          LANG_KEYS=$(yq 'keys | join(" ")' config/_default/languages.toml)
+          # Extract all language identifiers (e.g., de, en, br, zh, jp)
+          LANGS=$(yq 'keys | join(" ")' config/_default/languages.toml)
 
-          echo "Starting verification for: ${LANG_KEYS}"
+          echo "Verifying deployment integrity for: ${LANGS}"
 
-          # Global Pagefind check
+          # Global Check: Ensure the search index exists
           if [ ! -s "public/pagefind/pagefind.js" ]; then
-            echo "::error::Search index pagefind.js is missing or empty!"
+            echo "::error::Global Pagefind index (pagefind.js) is missing or empty!"
             exit 1
           fi
 
-          for key in $LANG_KEYS; do
-            # 1. Get the contentDir for this specific key (e.g., "content/br")
-            # 2. Use 'sed' to remove the "content/" prefix to get the output folder name (e.g., "br")
-            RAW_DIR=$(yq ".\"$key\".contentDir" config/_default/languages.toml)
-            OUT_DIR=$(echo $RAW_DIR | sed 's|^content/||')
+          for lang in $LANGS; do
+            echo "Checking language: $lang"
 
-            echo "Checking Language Key: $key (Output Folder: public/$OUT_DIR)"
-
-            # Verify the physical output folder exists
-            if [ ! -d "public/$OUT_DIR" ]; then
-              echo "::error::Output folder 'public/$OUT_DIR' missing for language '$key'"
+            # 1. Directory Check
+            # Identifier == Folder Name, check public/$lang
+            if [ ! -d "public/$lang" ]; then
+              echo "::error::Output directory 'public/$lang' was not generated!"
               exit 1
             fi
 
-            # Verify the Pagefind index exists using the Language Key (ISO code)
-            # Pagefind uses the [key], e.g., pagefind.pt-br_HASH.pf_meta
-            if ! ls public/pagefind/pagefind.${key}_*.pf_meta >/dev/null 2>&1; then
-              echo "::error::Pagefind index meta missing for language key: $key"
+            # 2. Pagefind Metadata Check
+            # Pagefind names its metadata files based on the Hugo language identifier
+            if ! ls public/pagefind/pagefind.${lang}_*.pf_meta >/dev/null 2>&1; then
+              echo "::error::Pagefind search metadata missing for language: $lang"
               exit 1
             fi
 
