@@ -33,6 +33,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
 
+      - name: Set Featured Posts
+        run: python scripts/update_featured.py
+
       - name: Build Hugo
         run: hugo --gc --minify
 
