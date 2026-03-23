@@ -3,7 +3,7 @@ name: Build, Test, and Deploy via SFTP
 on: [push, pull_request]
 
 jobs:
-  deploy:
+  build-and-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,49 +23,42 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyTest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
       - name: Build Hugo
         run: hugo --gc --minify
 
       - name: Build Pagefind
         run: npx pagefind --site public
 
-      - name: Run Integrity Checks
-        run: |
-          # Install yq to read your languages.toml
-          sudo wget -nv https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+      - name: Run Integration Tests
+        run: pytest tests/test_integration.py -v
 
-          # Extract all language identifiers (e.g., de, en, br, zh, jp)
-          LANGS=$(yq 'keys | join(" ")' config/_default/languages.toml)
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: public/
+          retention-days: 1
 
-          echo "Verifying deployment integrity for: ${LANGS}"
-
-          # Global Check: Ensure the search index exists
-          if [ ! -s "public/pagefind/pagefind.js" ]; then
-            echo "::error::Global Pagefind index (pagefind.js) is missing or empty!"
-            exit 1
-          fi
-
-          for lang in $LANGS; do
-            echo "Checking language: $lang"
-
-            # 1. Directory Check
-            # Identifier == Folder Name, check public/$lang
-            if [ ! -d "public/$lang" ]; then
-              echo "::error::Output directory 'public/$lang' was not generated!"
-              exit 1
-            fi
-
-            # 2. Pagefind Metadata Check
-            # Pagefind names its metadata files based on the Hugo language identifier
-            if ! ls public/pagefind/pagefind.${lang}_*.pf_meta >/dev/null 2>&1; then
-              echo "::error::Pagefind search metadata missing for language: $lang"
-              exit 1
-            fi
-
-            echo "✓ Integrity passed for $key ($OUT_DIR)"
-          done
-
-          echo "All checks passed!"
+  deploy:
+    needs: build-and-check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: public/
 
 #      - name: Deploy to Server via SFTP (if pushed to main branch)
 #          if: github.event_name == 'push' && github.ref == 'refs/heads/main'
