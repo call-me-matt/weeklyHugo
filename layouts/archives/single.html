@@ -1,0 +1,112 @@
+{{- define "main" -}}
+{{- $s := .Site.Params }}
+{{- $p := .Params }}
+
+{{/* --- Logic to determine if the current page is a "Shadow File" --- */}}
+{{- $rawLen := len (trim .RawContent "\n\r ") -}}
+{{- $isShadow := le $rawLen 10 -}}
+
+{{/* --- Resolve Fallback Hierarchy --- */}}
+{{- $fallbackLang := .Language.Params.fallback -}}
+{{/* We use the language of the first site in the list as the 'default' */}}
+{{- $defaultLang := (index .Sites 0).Language.Lang -}}
+
+<style>
+  /* --- Translation Notice Styling (Adaptive) --- */
+  .translation-notice {
+    background: var(--bg-light);
+    padding: 1.25rem;
+    border-left: 5px solid var(--accent);
+    margin-bottom: 2rem;
+    border-radius: 4px;
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  [data-mode="dark"] .translation-notice {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .translation-notice strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+</style>
+
+<div class="{{ if ne $p.singleColumn true }}grid-inverse {{ end }}wrap content">
+  <article class="post_content">
+    <h1 class="post_title">{{ .Title | markdownify }}</h1>
+    {{- partial "post-meta" . }}
+
+    {{/* --- 1. Universal Translation Header --- */}}
+    {{- if $isShadow -}}
+    <div class="translation-notice">
+      <strong>{{ i18n "translation_missing_header" | default "This article is not yet available in your language."
+        }}</strong>
+      <p style="margin: 0;">
+        {{ i18n "help_us_translate" | default "We are showing a fallback version while we work on the translation." }}
+      </p>
+    </div>
+    {{- end -}}
+
+    {{/* --- 2. Feature Image --- */}}
+    {{- with .Params.featureImage -}}
+    <div class="post_featured">
+      {{- partial "image" (dict "file" . "alt" $p.featureImageAlt "cap" $p.featureImageCap "type" "featured" "Page"
+      $.Page) }}
+    </div>
+    {{- end -}}
+
+    {{/* --- 3. Post Body --- */}}
+    <div class="post_body">
+      {{- if not $isShadow -}}
+      {{/* Display native content */}}
+      {{ .Content }}
+      {{- else -}}
+      {{/* --- Fallback Selection Logic --- */}}
+      {{- $contentFound := false -}}
+
+      {{/* Priority 1: Use the 'fallback' parameter from languages.toml */}}
+      {{- if $fallbackLang -}}
+      {{- range .AllTranslations -}}
+      {{- if and (eq .Language.Lang $fallbackLang) (not $contentFound) -}}
+      {{ .Content }}
+      {{- $contentFound = true -}}
+      {{- end -}}
+      {{- end -}}
+      {{- end -}}
+
+      {{/* Priority 2: Use the site's default language (index 0) */}}
+      {{- if not $contentFound -}}
+      {{- range .AllTranslations -}}
+      {{- if and (eq .Language.Lang $defaultLang) (not $contentFound) -}}
+      {{ .Content }}
+      {{- $contentFound = true -}}
+      {{- end -}}
+      {{- end -}}
+      {{- end -}}
+
+      {{/* Priority 3: Final fallback to any translation with content */}}
+      {{- if not $contentFound -}}
+      {{- range .AllTranslations -}}
+      {{- if and (gt (len .RawContent) 10) (not $contentFound) -}}
+      {{- .Content -}}
+      {{- $contentFound = true -}}
+      {{- end -}}
+      {{- end -}}
+      {{- end -}}
+      {{- end -}}
+    </div>
+
+    {{- partial "i18nlist" . }}
+  </article>
+
+  {{- if ( ne $p.sidebar false ) }}
+  {{- partial "sidebar" . }}
+  {{ end }}
+</div>
+{{- end -}}
