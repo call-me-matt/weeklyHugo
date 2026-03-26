@@ -39,7 +39,8 @@
   weight = 6
   title = "semanárioOSM"
   contentDir = "content/pt"
-  fallback = "br"
+  [pt.params]
+    fallback = "br"
 
 [br]
   languageCode = "pt-br"
@@ -47,7 +48,8 @@
   title = "semanárioOSM"
   weight = 7
   contentDir = "content/br"
-  fallback = "pt"
+  [br.params]
+    fallback = "pt"
 
 [cz]
   languageCode = "cs"
