@@ -2,17 +2,31 @@
 {{- $s := .Site.Params }}
 {{- $p := .Params }}
 
-{{/* --- Logic to determine if the current page is a "Shadow File" --- */}}
+{{/* --- 1. IDENTIFY SHADOW FILES --- */}}
+{{/* A file is a 'shadow' if it has no significant content (less than 10 chars) */}}
 {{- $rawLen := len (trim .RawContent "\n\r ") -}}
 {{- $isShadow := le $rawLen 10 -}}
 
-{{/* --- Resolve Fallback Hierarchy --- */}}
-{{- $fallbackLang := .Language.Params.fallback -}}
-{{/* We use the language of the first site in the list as the 'default' */}}
+{{/* --- 2. HIERARCHICAL FALLBACK SETUP --- */}}
+{{/* Resolve the custom 'fallback' from languages.toml and the default site lang */}}
+{{- $fallbackLang := or .Language.Params.fallback .Params.fallback -}}
 {{- $defaultLang := (index .Sites 0).Language.Lang -}}
 
+{{/* --- 3. DYNAMIC READING TIME --- */}}
+{{/* Initialize with the current page value, then update if it's a shadow file */}}
+{{- $finalReadingTime := .ReadingTime -}}
+
+{{- if $isShadow -}}
+{{- range .AllTranslations -}}
+{{- if or (eq .Language.Lang $fallbackLang) (eq .Language.Lang $defaultLang) -}}
+{{/* Overwrite variable with the value from the content-source translation */}}
+{{- $finalReadingTime = .ReadingTime -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 <style>
-  /* --- Translation Notice Styling (Adaptive) --- */
+  /* --- ADAPTIVE TRANSLATION HEADER --- */
   .translation-notice {
     background: var(--bg-light);
     padding: 1.25rem;
@@ -24,6 +38,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
 
+  /* Specific border for Dark Mode */
   [data-mode="dark"] .translation-notice {
     border: 1px solid rgba(255, 255, 255, 0.15);
   }
@@ -40,9 +55,12 @@
 <div class="{{ if ne $p.singleColumn true }}grid-inverse {{ end }}wrap content">
   <article class="post_content">
     <h1 class="post_title">{{ .Title | markdownify }}</h1>
-    {{- partial "post-meta" . }}
 
-    {{/* --- 1. Universal Translation Header --- */}}
+    {{/* --- 4. METADATA --- */}}
+    {{/* Passing the calculated reading time via a dictionary */}}
+    {{- partial "post-meta" (dict "context" . "readingTime" $finalReadingTime) }}
+
+    {{/* --- 5. TRANSLATION HEADER --- */}}
     {{- if $isShadow -}}
     <div class="translation-notice">
       <strong>{{ i18n "translation_missing_header" | default "This article is not yet available in your language."
@@ -53,7 +71,7 @@
     </div>
     {{- end -}}
 
-    {{/* --- 2. Feature Image --- */}}
+    {{/* --- 6. FEATURE IMAGE --- */}}
     {{- with .Params.featureImage -}}
     <div class="post_featured">
       {{- partial "image" (dict "file" . "alt" $p.featureImageAlt "cap" $p.featureImageCap "type" "featured" "Page"
@@ -61,41 +79,38 @@
     </div>
     {{- end -}}
 
-    {{/* --- 3. Post Body --- */}}
+    {{/* --- 7. CONTENT BODY --- */}}
     <div class="post_body">
       {{- if not $isShadow -}}
-      {{/* Display native content */}}
+      {{/* Display native language content */}}
       {{ .Content }}
       {{- else -}}
-      {{/* --- Fallback Selection Logic --- */}}
+      {{/* Resolve fallback content based on hierarchy */}}
       {{- $contentFound := false -}}
 
-      {{/* Priority 1: Use the 'fallback' parameter from languages.toml */}}
+      {{/* Try specific fallback first */}}
       {{- if $fallbackLang -}}
       {{- range .AllTranslations -}}
       {{- if and (eq .Language.Lang $fallbackLang) (not $contentFound) -}}
-      {{ .Content }}
-      {{- $contentFound = true -}}
+      {{ .Content }}{{ $contentFound = true }}
       {{- end -}}
       {{- end -}}
       {{- end -}}
 
-      {{/* Priority 2: Use the site's default language (index 0) */}}
+      {{/* Try default site language next */}}
       {{- if not $contentFound -}}
       {{- range .AllTranslations -}}
       {{- if and (eq .Language.Lang $defaultLang) (not $contentFound) -}}
-      {{ .Content }}
-      {{- $contentFound = true -}}
+      {{ .Content }}{{ $contentFound = true }}
       {{- end -}}
       {{- end -}}
       {{- end -}}
 
-      {{/* Priority 3: Final fallback to any translation with content */}}
+      {{/* Emergency fallback: any translation with content */}}
       {{- if not $contentFound -}}
       {{- range .AllTranslations -}}
       {{- if and (gt (len .RawContent) 10) (not $contentFound) -}}
-      {{- .Content -}}
-      {{- $contentFound = true -}}
+      {{ .Content }}{{ $contentFound = true }}
       {{- end -}}
       {{- end -}}
       {{- end -}}
