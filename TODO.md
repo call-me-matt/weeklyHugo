@@ -26,6 +26,7 @@ The following aspects have been identified and need to be completed in order to 
 * referene to articles with shortcodes (li id to be replaced by {{ < anchor "id-slug" > }})
 * footnotes also need a shortcode (^1^ to be translated into {{< sup "1" >}})
 * upcoming events category shall not be a list item
+* include also non-translated languages in markdown export --> see migration/create_shadow_files.py
 
 ## OSMBC admin config
 

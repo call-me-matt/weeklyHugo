@@ -16,6 +16,7 @@ from pathlib import Path
 ################################################################################
 """
 
+
 def migrate_files(source_path):
     # Path to your Hugo base content directory
     hugo_base = Path("./content")
@@ -31,10 +32,10 @@ def migrate_files(source_path):
 
         # 1. Extract the issue number (digits following "WN")
         # Example: "WN816..." -> 816
-        number_match = re.search(r'WN(\d+)', filename)
+        number_match = re.search(r"WN(\d+)", filename)
         if not number_match:
             continue
-            
+
         issue_number = number_match.group(1)
         # Format to 4-digit string (e.g., 0816.md)
         target_filename = f"{issue_number.zfill(4)}.md"
@@ -43,7 +44,7 @@ def migrate_files(source_path):
         # Logic: Get the part before '.md', then the part after the last dot
         # Example: "WN816.2026.BR.md" -> BR
         try:
-            lang_upper = file_path.stem.split('.')[-1]
+            lang_upper = file_path.stem.split(".")[-1]
             lang_lower = lang_upper.lower()
         except IndexError:
             print(f"Skipping {filename}: Could not determine language code.")
@@ -55,9 +56,10 @@ def migrate_files(source_path):
 
         # Move and rename the file
         target_path = target_dir / target_filename
-        shutil.move(str(file_path), str(target_path))
+        shutil.copyfile(str(file_path), str(target_path))
 
         print(f"Processed: {filename} -> {target_path}")
+
 
 if __name__ == "__main__":
     # Get the source directory from command line argument, default to current dir
