@@ -3,12 +3,10 @@
 The following aspects need to be investigated and solutions to be developed
 
 * featureImageCap with superscript and links
-* do we want to show also unavailable translations?
 * rss feeds for all languages with unchanged adress (de/feed and feed?lang=de)
 * upcoming event flags have a caption
 * theme polishing, use hugo mod instead of theme git submodule
 * translation flag icons :FR-s: »> :DE-t:
-* use pagefind for search (multi lang support and faster, see github action deploy script)
 * workflow of publishing, editing (started with migration/publish_osmbc_md.py)
 * migration of previous blog entries (export database to content folder as markups)
 * comment function with moderation
