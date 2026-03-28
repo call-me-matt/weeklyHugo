@@ -1,34 +1,63 @@
 {{- $params := .Site.Params }}
 {{- $centerLogo := $params.centerLogo }}
 {{ $logo := $params.logo }}
-<header class="nav_header" >
+<header class="nav_header">
   <nav class="nav">
     {{- if $centerLogo }}
-      {{- partialCached "logo" (dict "logo" $logo "class" "nav_hide") }}
+    {{- partialCached "logo" (dict "logo" $logo "class" "nav_hide") }}
     {{- else }}
-      {{- partialCached "logo" (dict "logo" $logo) }}
+    {{- partialCached "logo" (dict "logo" $logo) }}
     {{- end }}
     <div class='nav_body nav_body_{{ default "left" $params.mobileNavigation }}'>
       {{ $context := . }}
       {{ $menuData := .Site.Data.menu }}
       {{ with $menuData }}
-        {{ partial "nav" (dict "context" $context "menu" $menuData) }}
+      {{ partial "nav" (dict "context" $context "menu" $menuData) }}
       {{- else }}
-        {{ partial "nav" (dict "context" . "menu" .Site.Menus.main) }}
+      {{ partial "nav" (dict "context" . "menu" .Site.Menus.main) }}
       {{- end }}
+
       {{ if hugo.IsMultilingual }}
       <div class="nav_parent">
+        {{/* The main menu item/icon defined in your config */}}
         <a href="#" class="nav_item">{{ $params.languageMenuName }}</a>
         <div class="nav_sub">
           <span class="nav_child"></span>
-          {{ range .Site.Home.AllTranslations }}
-          <a href="{{ .Permalink }}" class="nav_child nav_item">{{ .Language.LanguageName }}</a>
+
+          {{/* Store translations in a variable for quick lookup */}}
+          {{ $allTranslations := .AllTranslations }}
+          {{ $currentLang := .Lang }}
+
+          {{/* Loop through all sites in their defined config order */}}
+          {{ range .Sites }}
+          {{ $siteLang := .Language.Lang }}
+
+          {{/* Only show other languages in the dropdown */}}
+          {{ if ne $siteLang $currentLang }}
+
+          {{/* Try to find if the current page has a translation for this specific site */}}
+          {{ $translation := index (where $allTranslations "Language.Lang" $siteLang) 0 }}
+
+          {{ if $translation }}
+          {{/* Link to the specific translated page */}}
+          <a href="{{ $translation.Permalink }}" class="nav_child nav_item">
+            {{ .Language.LanguageName }}
+          </a>
+          {{ else }}
+          {{/* Fallback to the homepage of that language */}}
+          <a href="{{ .Home.Permalink }}" class="nav_child nav_item">
+            {{ .Language.LanguageName }}
+          </a>
+          {{ end }}
+
+          {{ end }}
           {{ end }}
         </div>
       </div>
       {{- end }}
+
       {{- if $centerLogo }}
-        {{- partial "logo" (dict "logo" $logo "class" "nav_center") }}
+      {{- partial "logo" (dict "logo" $logo "class" "nav_center") }}
       {{- end }}
       {{- partialCached "follow" . }}
     </div>
