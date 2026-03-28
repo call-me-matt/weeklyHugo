@@ -1,9 +1,16 @@
+/* add map image as background banner */
 .nav_header
-  background-image: url('/images/banner.png')
-  background-size: cover
-  background-position: center
-  background-repeat: no-repeat
-  height: 140px !important
+  background: url('/images/banner.png') center/cover no-repeat !important
+  min-height: 140px
 
+  /* all links and texts in the banner area shall be black */
+  .nav_parent
+    color: #000000 
+
+  /* also color icons like the burger menu black */
+  svg.icon
+    fill: #000000 !important
+
+/* adjust content under nav header */
 .content
-  padding-top: 140px !important
+  margin-top: 75px
