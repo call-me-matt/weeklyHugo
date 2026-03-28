@@ -1,9 +1,35 @@
+/* add banner image */
 .nav_header
-  background-image: url('/images/banner.png')
-  background-size: cover
-  background-position: center
-  background-repeat: no-repeat
-  height: 140px !important
+  background: url('/images/banner.png') center/cover no-repeat
+  height: 140px
+  
+  /* make sure text in the banner area are visible */
+  .nav_parent > .nav_item
+    color: black
 
+  /* make sure also icons in the banner area are visible */
+  svg.icon
+    fill: black !important
+
+/* shift content below banner immage */
 .content
-  padding-top: 140px !important
+  margin-top: 75px
+
+/* adapt navigation bar in mobile mode */
+@media screen and (max-width: 768px)
+  .nav_body
+    /* shift menu down below banner area */
+    top: 140px
+    
+    /* use dynamic background color */
+    background-color: var(--choice-bg)
+    
+    /* use matching text color */
+    .nav_item
+      color: var(--text) !important
+      
+    /* i dont know */
+    .nav_sub
+      background-color: var(--choice-bg)
+      .nav_item
+        color: var(--text)
