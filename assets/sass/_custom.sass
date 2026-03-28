@@ -1,16 +1,35 @@
-/* add map image as background banner */
+/* add banner image */
 .nav_header
-  background: url('/images/banner.png') center/cover no-repeat !important
-  min-height: 140px
+  background: url('/images/banner.png') center/cover no-repeat
+  height: 140px
+  
+  /* make sure text in the banner area are visible */
+  .nav_parent > .nav_item
+    color: black
 
-  /* all links and texts in the banner area shall be black */
-  .nav_parent
-    color: #000000 
-
-  /* also color icons like the burger menu black */
+  /* make sure also icons in the banner area are visible */
   svg.icon
-    fill: #000000 !important
+    fill: black !important
 
-/* adjust content under nav header */
+/* shift content below banner immage */
 .content
   margin-top: 75px
+
+/* adapt navigation bar in mobile mode */
+@media screen and (max-width: 768px)
+  .nav_body
+    /* shift menu down below banner area */
+    top: 140px
+    
+    /* use dynamic background color */
+    background-color: var(--choice-bg)
+    
+    /* use matching text color */
+    .nav_item
+      color: var(--text) !important
+      
+    /* i dont know */
+    .nav_sub
+      background-color: var(--choice-bg)
+      .nav_item
+        color: var(--text)
