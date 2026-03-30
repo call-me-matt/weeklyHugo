@@ -33,3 +33,4 @@ The following aspects have been identified and need to be completed in order to 
 ## Manual migration steps
 
 * migration of previous images (copy wp-content folder to static/wp-content)
+* add i18n/<lang>.toml files to translate missing-translation-header (and other website headlines)
