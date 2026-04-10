@@ -3,7 +3,6 @@
 The following aspects need to be investigated and solutions to be developed
 
 * featureImageCap with superscript and links
-* do we want to show also unavailable translations?
 * rss feeds for all languages with unchanged adress (de/feed and feed?lang=de)
 * upcoming event flags have a caption
 * theme polishing, use hugo mod instead of theme git submodule
@@ -25,6 +24,7 @@ The following aspects have been identified and need to be completed in order to 
 * referene to articles with shortcodes (li id to be replaced by {{ < anchor "id-slug" > }})
 * footnotes also need a shortcode (^1^ to be translated into {{< sup "1" >}})
 * upcoming events category shall not be a list item
+* include also non-translated languages in markdown export --> see migration/create_shadow_files.py
 
 ## OSMBC admin config
 
@@ -33,3 +33,4 @@ The following aspects have been identified and need to be completed in order to 
 ## Manual migration steps
 
 * migration of previous images (copy wp-content folder to static/wp-content)
+* add i18n/<lang>.toml files to translate missing-translation-header (and other website headlines)

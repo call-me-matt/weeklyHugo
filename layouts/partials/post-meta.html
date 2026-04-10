@@ -1,0 +1,68 @@
+{{- /* This is a copy from the theme which fixes the reading time if a fallback language is used */ -}}
+
+{{- /* Determine if we have a dict or a standard Page */ -}}
+{{- $page := . -}}
+{{- $rt := .ReadingTime -}}
+
+{{- if reflect.IsMap . -}}
+{{- $page = .context -}}
+{{- $rt = .readingTime -}}
+{{- end -}}
+
+{{- /* THEME ORIGINAL LOGIC (Updated to use $page instead of .) */ -}}
+{{- $showShare := ne ($page.Param "showshare") false }}
+{{- $showDate := ne ($page.Param "showdate") false }}
+{{- $showLastmod := default false ($page.Param "showLastmod") }}
+{{- $lastmodSeparator := default "/" ($page.Param "lastmodSeparator") }}
+{{- $showReadTime := ne ($page.Param "showreadtime") false }}
+{{- $showPostMeta := or ($showShare) ($showDate) ($showReadTime) (isset $page.Params "tags") }}
+{{- $scratch := newScratch }}
+{{- $scratch.Set "writeSeparator" false }}
+
+{{- if $showPostMeta }}
+<div class="post_meta">
+  {{- end }}
+
+  {{- if $showDate }}
+  <span>{{ partial "sprite" (dict "icon" "calendar") }}</span>
+  <span class="post_date">
+    {{ $page.Date.Format (default "Jan 2, 2006" $page.Site.Params.dateFormat) -}}
+    {{ if (and $showLastmod (ne $page.Date $page.Lastmod)) }}
+    {{ $lastmodSeparator }} <time datetime="{{ $page.Lastmod.Format " Mon Jan 10 17:13:38 2020 -0700" }}">
+      {{ $page.Lastmod.Format (default "Jan 2, 2006" $page.Site.Params.dateFormat) }}</time>
+    {{ end }}
+  </span>
+  {{- $scratch.Set "writeSeparator" true }}
+  {{- end }}
+
+  {{- if $showReadTime }}
+  <span class="post_time">
+    {{ if ($scratch.Get "writeSeparator") }} · {{ end }}
+    {{- /* INJECT CALCULATED READING TIME: */ -}}
+    {{ T "reading_time" (dict "ReadingTime" $rt) }}
+  </span>
+  {{- $scratch.Set "writeSeparator" true }}
+  {{- end }}
+
+  {{- with $page.Params.tags -}}
+  <span>
+    {{- if ($scratch.Get "writeSeparator") }}&nbsp;· {{ end }}
+    {{- range . }}
+    {{- $tag := . -}}
+    <a href='{{ absLangURL (printf "tags") }}/{{ replace $tag "#" "%23" | urlize }}/' title="{{ . }}"
+      class="post_tag button button_translucent">
+      {{- . }}
+    </a>
+    {{- end }}
+  </span>
+  {{- $scratch.Set "writeSeparator" true }}
+  {{- end }}
+
+  {{- if $showShare }}
+  <span class="page_only">{{ if ($scratch.Get "writeSeparator") }}&nbsp;·{{ end }}{{ partial "share" $page }}</span>
+  {{- $scratch.Set "writeSeparator" true }}
+  {{- end }}
+
+  {{- if $showPostMeta }}
+</div>
+{{- end }}

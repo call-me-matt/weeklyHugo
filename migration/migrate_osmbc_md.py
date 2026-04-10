@@ -60,6 +60,10 @@ def process_zip(zip_path):
         if not run_step("move_osmbc_md.py", temp_path):
             return False
 
+        # Step 4: Create shadow files for missing languages
+        if not run_step("create_shadow_files.py", temp_path):
+            return False
+
     # Success: All steps completed
     print(f"--- Finished: {zip_path.name} ---")
     return True
